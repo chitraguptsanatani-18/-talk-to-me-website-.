@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Talk to Me - Free English Tutor</title>
+    <style>
+        body { background-color: #f0f8ff; font-family: Arial; text-align: center; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; font-size: 20px; }
+        #output { margin-top: 20px; font-size: 18px; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Talk to Me: Free Voice English Learning</h1>
+    <p>Speak into your mic! Start with basic topics.</p>
+    <button onclick="startRecognition()">Start Talking</button>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        recognition.onresult = function(event) {
+            const userInput = event.results[0][0].transcript;
+            output.innerHTML += '<p>You said: ' + userInput + '</p>';
+            
+            // Simple error correction (JS rule-based)
+            let corrected = userInput.replace(/i is/g, 'I am'); // Example: Fix "I is" to "I am"
+            corrected = corrected.replace(/sorry/g, 'apologize'); // Vocab suggestion
+            if (userInput !== corrected) {
+                output.innerHTML += '<p>Correction: ' + corrected + '</p>';
+                speak('Good try! Correct way: ' + corrected);
+            } else {
+                output.innerHTML += '<p>Great! No errors.</p>';
+                speak('Great job! What next?');
+            }
+        };
+
+        function startRecognition() {
+            recognition.start();
+            output.innerHTML += '<p>Listening...</p>';
+        }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Start greeting
+        speak("Hi, I'm your free English tutor. What topic to talk about?");
+    </script>
+</body>
+</html>
